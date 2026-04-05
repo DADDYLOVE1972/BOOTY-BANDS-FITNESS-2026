@@ -1,28 +1,14 @@
 {
-  "name": "booty-bands-fitness-2026",
+  "name": "booty-bands-backend",
   "version": "1.0.0",
-  "private": true,
-  "type": "module",
+  "main": "server.cjs",
+  "type": "commonjs",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "start": "node server.cjs"
   },
   "dependencies": {
-    "@stripe/stripe-js": "^9.0.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^7.13.2"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^4.7.0",
-    "autoprefixer": "^10.4.0",
-    "eslint": "^8.57.0",
-    "postcss": "^8.4.0",
-    "tailwindcss": "^3.4.0",
-    "vite": "^5.4.21"
-  },
-  "engines": {
-    "node": "24.x"
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "stripe": "^14.0.0"
   }
 }
