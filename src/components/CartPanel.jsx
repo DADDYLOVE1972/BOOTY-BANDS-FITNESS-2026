@@ -47,22 +47,22 @@ const handleCheckout = async () => {
       }
     );
 
-    console.log("Response:", response); // 👈 ADD THIS
+    console.log("Response:", response);
 
     const data = await response.json();
+    console.log("Data:", data);
 
-    console.log("Data:", data); // 👈 ADD THIS
-
+    // 🔥 THIS IS WHAT YOU ARE MISSING
     if (data.url) {
       window.location.href = data.url;
     } else {
-      console.error("No URL returned", data); // 👈 ADD THIS
+      console.error("No URL returned:", data);
     }
+
   } catch (error) {
     console.error("Checkout error:", error);
   }
 };
-
 if (!open) return null;
 
   return (
