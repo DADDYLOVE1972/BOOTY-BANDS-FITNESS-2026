@@ -34,7 +34,7 @@ function CartPanel({ open, setOpen, cart, setCart }) {
     0
   );
 
- const handleCheckout = async () => {
+const handleCheckout = async () => {
   try {
     const response = await fetch(
       "https://booty-bands-fitness-2026-1.onrender.com/create-checkout-session",
@@ -47,16 +47,23 @@ function CartPanel({ open, setOpen, cart, setCart }) {
       }
     );
 
+    console.log("Response:", response); // 👈 ADD THIS
+
     const data = await response.json();
+
+    console.log("Data:", data); // 👈 ADD THIS
 
     if (data.url) {
       window.location.href = data.url;
+    } else {
+      console.error("No URL returned", data); // 👈 ADD THIS
     }
   } catch (error) {
     console.error("Checkout error:", error);
   }
 };
-  if (!open) return null;
+
+if (!open) return null;
 
   return (
     <div className="fixed top-0 right-0 w-80 h-full bg-white text-black shadow-2xl p-6 z-50 overflow-y-auto">
