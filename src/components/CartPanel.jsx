@@ -1,6 +1,6 @@
 import { loadStripe } from "@stripe/stripe-js";
 
-const stripePromise = loadStripe("YOUR_PUBLIC_STRIPE_KEY");
+const stripePromise = loadStripe("pk_test_12345...");
 function CartPanel({ open, setOpen, cart, setCart }) {
 
   const increaseQty = (id) => {
@@ -34,29 +34,28 @@ function CartPanel({ open, setOpen, cart, setCart }) {
     0
   );
 
-  const handleCheckout = async () => {
-    try {
-      const response = await fetch(
-        "https://YOUR-RENDER-URL.onrender.com/create-checkout-session", // 🔥 FIX THIS
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ cart }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.url) {
-        window.location.href = data.url;
+ const handleCheckout = async () => {
+  try {
+    const response = await fetch(
+      "https://booty-bands-fitness-2026-1.onrender.com/create-checkout-session",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ cart }),
       }
-    } catch (error) {
-      console.error("Checkout error:", error);
-    }
-  };
+    );
 
+    const data = await response.json();
+
+    if (data.url) {
+      window.location.href = data.url;
+    }
+  } catch (error) {
+    console.error("Checkout error:", error);
+  }
+};
   if (!open) return null;
 
   return (
