@@ -1,0 +1,1 @@
+var VideoDetailPage_SkipIntroBannerEvents;(function(n){function u(n,t){var u={TS:(new Date).getTime(),T:r+"Click",AppNS:i,VT:Math.round(n),SP:t};pInstr.icd(u)}var t=_w.VDConfig,i=t?t.appns:"video",r="CI.SkipIntro";n.sendClickEvent=u})(VideoDetailPage_SkipIntroBannerEvents||(VideoDetailPage_SkipIntroBannerEvents={}))

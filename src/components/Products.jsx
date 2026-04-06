@@ -26,8 +26,7 @@ function Products({ setCart }) {
   };
 
   return (
-    <section id="products" className="py-28 px-6 bg-gradient-to-b from-gray-50 to-white">
-      
+    <section id="products" className="py-28 px-6 bg-gradient-to-b from-gray-50 to-white">  
       <div className="max-w-6xl mx-auto text-center">
 
         <h2 className="text-4xl md:text-5xl font-extrabold text-black mb-16">
