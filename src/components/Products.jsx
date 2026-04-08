@@ -81,8 +81,11 @@ function Products({ setCart }) {
                   Add to Cart
                 </button>
 
-                <p className="text-xs text-gray-500 mt-2">
-                  🔒 Secure Checkout
+                <p className="text-xs text-red-500 mt-2">
+                  🔥 Limited stock available
+                </p>
+                <p className="text-xs text-gray-400 mt-2">
+                  ✔ 30-Day Guarantee • ✔ Secure Checkout
                 </p>
 
               </div>
