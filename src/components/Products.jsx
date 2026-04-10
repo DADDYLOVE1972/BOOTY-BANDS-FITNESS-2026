@@ -38,8 +38,7 @@ function Products({ setCart }) {
           {items.map((item) => (
             <div
               key={item.id}
-              className="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-3 hover:scale-105 transition duration-300"
-            >
+             className="bg-white rounded-3xl shadow-lg overflow-hidden transition duration-300 hover:shadow-2xl >hover:-translate-y-2 hover:scale-105">
               
               {/* IMAGE */}
               <div className="bg-gray-100 p-8 flex items-center justify-center h-64 relative">
@@ -81,13 +80,13 @@ function Products({ setCart }) {
                   Add to Cart
                 </button>
 
-                <p className="text-xs text-red-500 mt-2">
-                  🔥 Limited stock available
-                </p>
-                <p className="text-xs text-gray-400 mt-2">
-                  ✔ 30-Day Guarantee • ✔ Secure Checkout
+                <p className="text-xs text-red-500 mt-2 animate-pulse">
+                  🔥 Only a few left in stock
                 </p>
 
+                <p className="text-xs text-gray-400 mt-1">
+                  ✔ Secure Checkout • ✔ 30-Day Guarantee
+                </p>
               </div>
 
             </div>

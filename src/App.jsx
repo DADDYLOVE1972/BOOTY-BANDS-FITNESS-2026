@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Success from "./pages/Success";
+import Cancel from "./pages/Cancel";
 import Navbar from "./components/Navbar";
 import CartPanel from "./components/CartPanel";
 import Hero from "./components/Hero";
@@ -20,7 +23,19 @@ function App() {
       {/* MAIN CONTENT */}
       <main className="pt-20">
         <Hero />
+         <div className="text-center py-6 bg-black text-white">
+            <p className="text-sm">
+              ⭐ 4.8/5 Rating • 1,000+ Happy Customers • Free Shipping Available
+            </p>
+          </div>
         <WhyChoose />
+        <Router>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/success" element={<Success />} />
+              <Route path="/cancel" element={<Cancel />} />
+            </Routes>
+          </Router>
 
         {/* LIGHT SECTION */}
         <div className="bg-gray-100 text-black">

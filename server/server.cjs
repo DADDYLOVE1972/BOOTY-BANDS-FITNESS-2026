@@ -75,9 +75,8 @@ app.post("/create-checkout-session", async (req, res) => {
       ],
 
       /* 🔥 FIXED URLs */
-      success_url: "https://bootybandsfitness.com",
-      cancel_url: "https://bootybandsfitness.com",
-    });
+                success_url: "https://booty-bands-fitness-2026-7hia.vercel.app/success",
+                cancel_url: "https://booty-bands-fitness-2026-7hia.vercel.app/cancel",    });
 
     res.json({ url: session.url });
 

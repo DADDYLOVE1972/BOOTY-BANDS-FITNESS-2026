@@ -1,28 +1,29 @@
-
 import fallback from "../assets/band1.png";
 const video = "/workout.mp4";
+
 function Hero() {
   return (
     <section className="relative h-screen flex items-center justify-center text-white text-center overflow-hidden">
 
-      {/* 🎥 VIDEO */}
+      {/* VIDEO */}
       <video
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover scale-150 z-0">
+        className="absolute inset-0 w-full h-full object-cover scale-110 z-0"
+      >
         <source src={video} type="video/mp4" />
       </video>
 
-      {/* 🖼️ FALLBACK (ONLY if video fails) */}
+      {/* FALLBACK */}
       <div
         className="absolute inset-0 bg-cover bg-center z-[-1]"
         style={{ backgroundImage: `url(${fallback})` }}
       ></div>
 
-      {/* 🌑 OVERLAY */}
-      <div className="absolute inset-0 bg-black/60 z-10"></div>
+      {/* OVERLAY */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80 z-10"></div>
 
       {/* CONTENT */}
       <div className="relative z-20 px-6">
@@ -44,6 +45,10 @@ function Hero() {
         >
           Shop Now & Transform →
         </button>
+
+        <p className="text-sm mt-3 text-gray-300">
+          ⭐ Trusted by 1,000+ customers
+        </p>
       </div>
     </section>
   );
