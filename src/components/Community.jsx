@@ -1,4 +1,8 @@
 import React from "react";
+import community1 from "../assets/IMG_2708.jpeg";
+import community2 from "../assets/IMG_2724.jpeg";
+import community3 from "../assets/IMG_2725.jpeg";
+import community4 from "../assets/IMG_2726.jpeg";
 
 const Community = () => {
   return (
@@ -17,25 +21,25 @@ const Community = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
 
           <img
-            src="/community1.jpg"
+            src={community1}
             alt="Workout"
             className="rounded-lg object-cover h-48 w-full"
           />
 
           <img
-            src="/community2.jpg"
+            src={community2}
             alt="Workout"
             className="rounded-lg object-cover h-48 w-full"
           />
 
           <img
-            src="/community3.jpg"
+            src={community3}
             alt="Workout"
             className="rounded-lg object-cover h-48 w-full"
           />
 
           <img
-            src="/community4.jpg"
+            src={community4}
             alt="Workout"
             className="rounded-lg object-cover h-48 w-full"
           />

@@ -1,55 +1,81 @@
-import fallback from "../assets/band1.png";
+import fallback from "../assets/band1.jpeg";
+
 const video = "/workout.mp4";
 
 function Hero() {
-  return (
-    <section className="relative h-screen flex items-center justify-center text-white text-center overflow-hidden">
+  const scrollToProducts = () => {
+    document.getElementById("featured-products")?.scrollIntoView({
+      behavior: "smooth",
+    });
+  };
 
-      {/* VIDEO */}
+  return (
+    <section
+      id="home"
+      className="relative min-h-screen flex items-center justify-center text-white text-center overflow-hidden"
+    >
+      {/* Background Video */}
       <video
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover scale-110 z-0"
+        className="absolute inset-0 w-full h-full object-cover scale-110 brightness-75 z-0"
       >
         <source src={video} type="video/mp4" />
       </video>
 
-      {/* FALLBACK */}
+      {/* Fallback Image */}
       <div
-        className="absolute inset-0 bg-cover bg-center z-[-1]"
+        className="absolute inset-0 bg-cover bg-center -z-10"
         style={{ backgroundImage: `url(${fallback})` }}
-      ></div>
+      />
 
-      {/* OVERLAY */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80 z-10"></div>
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80 z-10" />
 
-      {/* CONTENT */}
-      <div className="relative z-20 px-6">
-        <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-          Sculpt Your Body. <br /> Own Your Strength.
+      {/* Hero Content */}
+      <div className="relative z-20 max-w-4xl px-6 mx-auto">
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold leading-tight">
+          Build Stronger Glutes.
+          <br />
+          Train Anywhere.
         </h1>
 
-        <p className="mt-4 text-lg md:text-xl text-gray-300 max-w-xl mx-auto">
-          Premium resistance bands designed to sculpt, strengthen, and elevate your workouts anywhere.
+        <p className="mt-6 text-lg md:text-2xl text-gray-200 max-w-2xl mx-auto">
+          Premium resistance bands designed to sculpt, strengthen, and elevate
+          your workouts wherever life takes you.
         </p>
 
-        <button
-          onClick={() =>
-            document.getElementById("products")?.scrollIntoView({
-              behavior: "smooth",
-            })
-          }
-          className="mt-6 bg-white text-black px-8 py-3 rounded-full hover:scale-110 transition duration-300 font-semibold shadow-lg"
-        >
-          Shop Now & Transform →
-        </button>
+        <div className="mt-10 flex flex-col sm:flex-row justify-center gap-5">
+          <button
+            onClick={scrollToProducts}
+            className="bg-white text-black px-10 py-4 rounded-full font-bold text-lg shadow-2xl hover:bg-cyan-400 hover:scale-105 transition-all duration-300"
+          >
+            Shop Now
+          </button>
 
-        <p className="text-sm mt-3 text-gray-300">
-          ⭐ Trusted by 1,000+ customers
+          <button
+            onClick={() =>
+              document.getElementById("videos")?.scrollIntoView({
+                behavior: "smooth",
+              })
+            }
+            className="border-2 border-white px-10 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-black transition-all duration-300"
+          >
+            View Workouts
+          </button>
+        </div>
+
+        <p className="mt-8 text-base text-gray-200 leading-7">
+          ★★★★★ Trusted by 1,000+ Customers
+          <br />
+          30-Day Money-Back Guarantee • Fast Shipping Across the USA
         </p>
       </div>
+
+      {/* Bottom Fade */}
+      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-b from-transparent to-black z-20" />
     </section>
   );
 }

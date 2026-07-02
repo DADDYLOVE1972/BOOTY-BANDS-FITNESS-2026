@@ -1,23 +1,30 @@
-export const products = [
+import band1 from "../assets/band1.jpeg";
+import band2 from "../assets/band2.jpeg";
+import band3 from "../assets/band3.jpeg";
+
+export const featuredProducts = [
   {
     id: 1,
-    name: "Beginner Booty Band Set",
-    price: 29,
-    badge: "BEST SELLER",
-    image: "/bands1.png"
+    name: "Advanced Bands",
+    price: 25,
+    img: band2,
+    tag: "Popular",
+    description: "Built for progressive strength training",
   },
   {
     id: 2,
-    name: "Pro Booty Band Set",
-    price: 39,
-    badge: "ATHLETE FAVORITE",
-    image: "/bands2.png"
+    name: "Pro Bands",
+    price: 35,
+    img: band3,
+    tag: "Elite",
+    description: "Maximum resistance for serious athletes",
   },
   {
     id: 3,
-    name: "Ultimate Booty Band Kit",
-    price: 49,
-    badge: "LIMITED",
-    image: "/bands3.png"
-  }
+    name: "Beginner Bands",
+    price: 45,
+    img: band1,
+    tag: "Best Seller",
+    description: "Perfect entry-level resistance set",
+  },
 ];

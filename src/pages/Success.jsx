@@ -5,7 +5,7 @@ function Success() {
 
   useEffect(() => {
     // Generate simple order ID (you can replace later with Stripe real ID)
-    const id = "BBF-" + Math.floor(100000 + Math.random() * 900000);
+    const id = "Booty Bands Fitness-" + Math.floor(100000 + Math.random() * 900000);
     setOrderId(id);
   }, []);
 

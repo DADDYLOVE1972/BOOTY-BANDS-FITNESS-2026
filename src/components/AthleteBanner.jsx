@@ -1,8 +1,13 @@
 import React from "react";
+import athleteBanner from "../assets/band1.jpeg";
 
 const AthleteBanner = () => {
   return (
-    <section className="relative bg-[url('/athlete.jpg')] bg-cover bg-center h-[500px] flex items-center justify-center">
+    <section
+      className="relative bg-cover bg-center h-[500px] flex items-center justify-center"
+      style={{ backgroundImage: `url(${athleteBanner})` }}
+    >
+      
 
       <div className="absolute inset-0 bg-black/60"></div>
 
