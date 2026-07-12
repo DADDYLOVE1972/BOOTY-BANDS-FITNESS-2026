@@ -1,6 +1,6 @@
 import fallback from "../assets/band1.jpeg";
 
-const video = "/workout.mp4";
+const video = "/Hero.mp4";
 
 function Hero() {
   const scrollToProducts = () => {
