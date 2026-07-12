@@ -5,26 +5,46 @@ import band3 from "../assets/band3.jpeg";
 export const featuredProducts = [
   {
     id: 1,
-    name: "Advanced Bands",
-    price: 25,
-    img: band2,
-    tag: "Popular",
-    description: "Built for progressive strength training",
+    name: "Premium Fabric Booty Bands",
+    price: "39.99",
+    img: band1,
+    tag: "BEST SELLER",
+    description:
+      "Premium fabric resistance bands with non-slip technology for glute workouts.",
+    features: [
+      "3 Resistance Levels",
+      "Non-Slip Fabric",
+      "Carry Bag Included",
+    ],
   },
+
   {
     id: 2,
-    name: "Pro Bands",
-    price: 35,
-    img: band3,
-    tag: "Elite",
-    description: "Maximum resistance for serious athletes",
+    name: "Latex Resistance Band Set",
+    price: "29.99",
+    img: band2,
+    tag: "NEW",
+    description:
+      "Five latex resistance bands for stretching, mobility and strength training.",
+    features: [
+      "5 Resistance Levels",
+      "Portable",
+      "Full Body Training",
+    ],
   },
+
   {
     id: 3,
-    name: "Beginner Bands",
-    price: 45,
-    img: band1,
-    tag: "Best Seller",
-    description: "Perfect entry-level resistance set",
+    name: "Tube Resistance Band System",
+    price: "49.99",
+    img: band3,
+    tag: "PRO",
+    description:
+      "Complete resistance tube system with handles and accessories.",
+    features: [
+      "Handles Included",
+      "Door Anchor",
+      "Gym Anywhere",
+    ],
   },
 ];
