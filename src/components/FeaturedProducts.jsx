@@ -1,19 +1,13 @@
 import { featuredProducts } from "../data/products";
 import { homepageConfig } from "../config/homepage";
+import { addItemToCart } from "../utils/cart";
+import { memo } from "react";
 
 function FeaturedProducts({ setCart }) {
   const { eyebrow, heading, subheading } = homepageConfig.featuredProducts;
 
   const shopNow = (item) => {
-    setCart((prev) => {
-      const existing = prev.find((i) => i.id === item.id);
-      if (existing) {
-        return prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
-        );
-      }
-      return [...prev, { ...item, quantity: 1 }];
-    });
+    addItemToCart(setCart, item);
   };
 
   return (
@@ -23,7 +17,7 @@ function FeaturedProducts({ setCart }) {
       className="py-28 md:py-40 lg:py-48 px-5 md:px-8 bg-white text-black"
     >
       <div className="w-full lg:w-[85vw] max-w-[110rem] mx-auto">
-        <div className="text-center mb-18 md:mb-24 lg:mb-28">
+        <div className="text-center mb-20 md:mb-24 lg:mb-28">
           <p className="text-lg md:text-xl font-extrabold tracking-[0.24em] uppercase text-gray-500 mb-6">
             {eyebrow}
           </p>
@@ -99,6 +93,7 @@ function FeaturedProducts({ setCart }) {
                       type="button"
                       onClick={() => shopNow(item)}
                       className="w-full bg-black text-white py-6 md:py-7 rounded-full font-extrabold text-2xl md:text-3xl shadow-xl shadow-black/20 hover:bg-gray-900 hover:scale-[1.025] transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-4"
+                      aria-label={`Add ${item.name} to cart for $${item.price}`}
                     >
                       Add To Cart
                     </button>
@@ -113,4 +108,4 @@ function FeaturedProducts({ setCart }) {
   );
 }
 
-export default FeaturedProducts;
+export default memo(FeaturedProducts);

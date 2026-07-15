@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { homepageConfig } from "../config/homepage";
 
 function WhyChoose() {
@@ -44,4 +45,4 @@ function WhyChoose() {
   );
 }
 
-export default WhyChoose;
+export default memo(WhyChoose);

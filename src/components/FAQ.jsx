@@ -13,17 +13,17 @@ function FAQ() {
     <section
       id="faq"
       aria-labelledby="faq-heading"
-      className="py-24 md:py-36 px-6 bg-black text-white scroll-mt-24"
+      className="py-28 md:py-40 px-6 bg-black text-white scroll-mt-24"
     >
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-14 md:mb-16">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16 md:mb-20">
           <h2 id="faq-heading" className="text-4xl md:text-5xl lg:text-6xl font-extrabold">
             {heading}
           </h2>
-          <p className="mt-5 text-gray-400 text-lg md:text-xl">{subheading}</p>
+          <p className="mt-6 text-gray-400 text-lg md:text-2xl leading-relaxed">{subheading}</p>
         </div>
 
-        <div className="space-y-6 md:space-y-7">
+        <div className="space-y-6 md:space-y-8">
           {items.map((faq, index) => {
             const isOpen = openIndex === index;
             const panelId = `faq-panel-${index}`;
@@ -32,7 +32,7 @@ function FAQ() {
             return (
               <div
                 key={faq.question}
-                className="rounded-3xl border border-white/10 bg-white/[0.045] shadow-xl shadow-black/25 overflow-hidden transition-all duration-300 hover:border-white/20 hover:shadow-2xl"
+                className="rounded-[2rem] border border-white/10 bg-white/[0.045] shadow-xl shadow-black/25 overflow-hidden transition-all duration-300 hover:border-white/20 hover:shadow-2xl"
               >
                 <h3>
                   <button
@@ -41,7 +41,7 @@ function FAQ() {
                     aria-expanded={isOpen}
                     aria-controls={panelId}
                     onClick={() => toggle(index)}
-                    className="w-full flex items-center justify-between gap-6 px-7 md:px-10 py-7 md:py-9 text-left font-extrabold text-xl md:text-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-inset"
+                    className="w-full flex items-center justify-between gap-6 px-7 md:px-12 py-8 md:py-10 text-left font-extrabold text-xl md:text-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-inset"
                   >
                     <span>{faq.question}</span>
                     <span
@@ -58,10 +58,10 @@ function FAQ() {
                   role="region"
                   aria-labelledby={buttonId}
                   hidden={!isOpen}
-                  className={`px-7 md:px-10 overflow-hidden transition-all duration-300 ${isOpen ? "pb-8 md:pb-10" : "pb-0"}`}
+                  className={`px-7 md:px-12 overflow-hidden transition-all duration-300 ${isOpen ? "pb-9 md:pb-12" : "pb-0"}`}
                 >
                   {isOpen && (
-                    <p className="text-gray-300 text-base md:text-xl leading-8 md:leading-9 border-t border-white/10 pt-5 md:pt-6">
+                    <p className="text-gray-300 text-lg md:text-2xl leading-8 md:leading-10 border-t border-white/10 pt-6 md:pt-8">
                       {faq.answer}
                     </p>
                   )}

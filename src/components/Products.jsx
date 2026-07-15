@@ -1,18 +1,9 @@
-import { featuredProducts } from "../data/products";
+﻿import { featuredProducts } from "../data/products";
+import { addItemToCart } from "../utils/cart";
 
 function Products({ setCart }) {
   const addToCart = (item) => {
-    setCart((prev) => {
-      const existing = prev.find((i) => i.id === item.id);
-
-      if (existing) {
-        return prev.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
-        );
-      }
-
-      return [...prev, { ...item, quantity: 1 }];
-    });
+    addItemToCart(setCart, item);
   };
 
   return (
@@ -44,9 +35,7 @@ function Products({ setCart }) {
 
                   <p className="text-gray-500 mb-2">{item.description}</p>
 
-                  <p className="text-yellow-400 mb-2" aria-label="5 out of 5 stars">
-                    ★★★★★
-                  </p>
+                  <p className="text-yellow-400 mb-2" aria-label="5 out of 5 stars">{"\u2605".repeat(5)}</p>
 
                   <p className="text-lg font-semibold mb-4">${item.price}</p>
 
@@ -54,17 +43,17 @@ function Products({ setCart }) {
                     type="button"
                     onClick={() => addToCart(item)}
                     className="w-full bg-black text-white py-3 rounded-full hover:bg-gray-800 hover:scale-105 transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
-                    aria-label={`Add ${item.name} to cart — $${item.price}`}
+                    aria-label={`Add ${item.name} to cart for $${item.price}`}
                   >
                     Add to Cart
                   </button>
 
                   <p className="text-xs text-red-500 mt-2 animate-pulse">
-                    🔥 Only a few left in stock
+                    {"\u{1F525}"} Only a few left in stock
                   </p>
 
                   <p className="text-xs text-gray-400 mt-1">
-                    ✔ Secure Checkout • ✔ 30-Day Guarantee
+                    {"\u2713"} Secure Checkout {"\u2022"} {"\u2713"} 30-Day Guarantee
                   </p>
                 </div>
               </article>
@@ -77,3 +66,4 @@ function Products({ setCart }) {
 }
 
 export default Products;
+

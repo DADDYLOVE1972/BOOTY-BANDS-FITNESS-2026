@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { homepageConfig } from "../config/homepage";
 
 function Reviews() {
@@ -44,4 +45,4 @@ function Reviews() {
   );
 }
 
-export default Reviews;
+export default memo(Reviews);

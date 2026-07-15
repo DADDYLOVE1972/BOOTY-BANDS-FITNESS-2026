@@ -1,10 +1,11 @@
 import { Play } from "lucide-react";
+import { memo } from "react";
 
 const workouts = ["Squats", "Bicep Curls", "Rows", "Glute Kickbacks"];
 
 function WorkoutVideos() {
   return (
-    <section className="bg-black text-white px-6 py-24 md:py-36 border-t border-gray-900">
+    <section id="videos" className="bg-black text-white px-6 py-24 md:py-36 border-t border-gray-900 scroll-mt-24">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-14 md:mb-16">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold">
@@ -43,4 +44,4 @@ function WorkoutVideos() {
   );
 }
 
-export default WorkoutVideos;
+export default memo(WorkoutVideos);
