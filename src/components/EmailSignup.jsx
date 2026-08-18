@@ -5,7 +5,7 @@ function EmailSignup() {
       <div className="container max-w-xl text-center">
 
         <h2 className="text-3xl font-bold mb-6">
-          Get 10% Off Your First Order
+          Use Discount Code BOOTY20
         </h2>
 
         <input

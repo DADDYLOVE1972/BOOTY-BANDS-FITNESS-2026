@@ -3,8 +3,7 @@ import { products } from "../data/products"
 
 function RelatedProducts({ currentId }) {
 
-  // safety: make sure id types match
-  const related = products.filter(p => Number(p.id) !== Number(currentId))
+  const related = products.filter((product) => product.id !== currentId)
 
   return (
     <section className="bg-black text-white py-20">
@@ -26,7 +25,7 @@ function RelatedProducts({ currentId }) {
             >
 
               <img
-                src={product.image}
+                src={product.img}
                 alt={product.name}
                 className="w-full mb-4 rounded-lg"
               />
@@ -35,6 +34,11 @@ function RelatedProducts({ currentId }) {
                 {product.name}
               </h3>
 
+              {product.compareAtPrice && (
+                <p className="text-gray-500 line-through">
+                  ${product.compareAtPrice}
+                </p>
+              )}
               <p className="text-gray-400">
                 ${product.price}
               </p>

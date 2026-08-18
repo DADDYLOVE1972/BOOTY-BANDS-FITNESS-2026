@@ -1,19 +1,26 @@
 import React from "react";
 import { useParams } from "react-router-dom";
+import { products } from "../data/products";
+import { addItemToCart } from "../utils/cart";
 
 const ProductPage = ({ cartItems, setCartItems }) => {
 
-  const { name } = useParams();
+  const { id, name } = useParams();
+  const product = products.find((item) => item.id === id || item.id === name);
 
   const addToCart = () => {
-
-    const newItem = {
-      name: name,
-      price: 29
-    };
-
-    setCartItems([...cartItems, newItem]);
+    if (product) {
+      addItemToCart(setCartItems, product);
+    }
   };
+
+  if (!product) {
+    return (
+      <div className="bg-black text-white min-h-screen flex items-center justify-center">
+        <p>Product not found.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-black text-white min-h-screen flex items-center justify-center">
@@ -21,11 +28,20 @@ const ProductPage = ({ cartItems, setCartItems }) => {
       <div className="text-center">
 
         <h1 className="text-4xl font-bold mb-4">
-          {name}
+          {product.name}
         </h1>
 
         <p className="text-gray-400 mb-6">
-          Premium resistance bands designed for serious workouts.
+          {product.description}
+        </p>
+
+        {product.compareAtPrice && (
+          <p className="text-gray-500 line-through">
+            ${product.compareAtPrice}
+          </p>
+        )}
+        <p className="text-3xl font-bold mb-6">
+          ${product.price}
         </p>
 
         <button

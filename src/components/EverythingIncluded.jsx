@@ -2,13 +2,13 @@ import overview from "../assets/product-overview.jpeg";
 
 function EverythingIncluded() {
   return (
-    <section className="py-20 md:py-28 bg-white dark:bg-black">
-      <div className="max-w-7xl mx-auto px-6 text-center">
-        <h2 className="text-4xl md:text-5xl font-bold mb-5">
+    <section className="pt-8 md:pt-10 pb-12 md:pb-16 bg-white dark:bg-black">
+      <div className="max-w-6xl mx-auto px-6 text-center">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-3">
           Everything Included
         </h2>
 
-        <p className="text-lg md:text-xl text-gray-500 mb-12">
+        <p className="text-sm md:text-base text-gray-500 mb-8 md:mb-10">
           Everything you need to sculpt, strengthen, and train anywhere.
         </p>
 
@@ -16,7 +16,7 @@ function EverythingIncluded() {
           src={overview}
           alt="Everything included in the Booty Bands Fitness package"
           loading="lazy"
-          className="mx-auto max-w-[1100px] rounded-2xl shadow-2xl w-full"
+          className="mx-auto max-w-[900px] rounded-2xl shadow-2xl w-full"
         />
       </div>
     </section>

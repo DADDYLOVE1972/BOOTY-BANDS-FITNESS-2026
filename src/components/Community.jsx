@@ -2,7 +2,7 @@ import React from "react";
 import community1 from "../assets/IMG_2708.jpeg";
 import community2 from "../assets/IMG_2724.jpeg";
 import community3 from "../assets/IMG_2725.jpeg";
-import community4 from "../assets/IMG_2726.jpeg";
+import community4 from "../assets/IMG_2729.jpeg";
 
 const Community = () => {
   return (

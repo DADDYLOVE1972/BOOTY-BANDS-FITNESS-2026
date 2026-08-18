@@ -5,7 +5,6 @@ import FeaturedProducts from "../components/FeaturedProducts";
 import EverythingIncluded from "../components/EverythingIncluded";
 import TrustBar from "../components/TrustBar";
 import WhyChoose from "../components/WhyChoose";
-import Products from "../components/Products";
 import Reviews from "../components/Reviews";
 import FAQ from "../components/FAQ";
 import Footer from "../components/Footer";
@@ -28,10 +27,6 @@ function Home() {
         <FeaturedProducts setCart={setCart} />
         <EverythingIncluded />
         <WhyChoose />
-
-        <div className="bg-gray-100 text-black">
-          <Products setCart={setCart} />
-        </div>
 
         <Reviews />
         <About />

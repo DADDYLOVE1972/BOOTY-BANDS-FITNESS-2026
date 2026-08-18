@@ -88,6 +88,7 @@ export const homepageConfig = {
 
   footer: {
     brand: "BOOTY BANDS FITNESS",
+    supportEmail: "support@bootybandsfitness.com",
     tagline:
       "Premium resistance bands designed to help you sculpt, strengthen, and train anywhere.",
     quickLinks: [
@@ -98,10 +99,10 @@ export const homepageConfig = {
       { label: "Contact", href: "#footer" },
     ],
     policies: [
-      { label: "Privacy Policy", href: "#privacy-policy" },
-      { label: "Shipping Policy", href: "#shipping-policy" },
-      { label: "Refund Policy", href: "#refund-policy" },
-      { label: "Terms and Conditions", href: "#terms-and-conditions" },
+      { label: "Privacy Policy", href: "/policies/privacy-policy" },
+      { label: "Shipping Policy", href: "/policies/shipping-policy" },
+      { label: "Refund Policy", href: "/policies/refund-policy" },
+      { label: "Terms and Conditions", href: "/policies/terms-and-conditions" },
     ],
   },
 };

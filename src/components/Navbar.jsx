@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Navbar({ cartCount, setOpen }) {
   const navLinks = [
     { label: "Home", href: "#home" },
@@ -24,16 +26,26 @@ function Navbar({ cartCount, setOpen }) {
         </a>
 
         <div className="order-3 flex w-full items-center justify-center gap-4 overflow-x-auto whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.16em] text-gray-400 lg:order-none lg:w-auto lg:gap-7 lg:text-xs">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              onClick={(event) => scrollTo(event, link.href)}
-              className="hover:text-white transition-colors duration-200"
-            >
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) =>
+            link.label === "Shop" ? (
+              <Link
+                key={link.label}
+                to="/shop"
+                className="hover:text-white transition-colors duration-200"
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <a
+                key={link.label}
+                href={link.href}
+                onClick={(event) => scrollTo(event, link.href)}
+                className="hover:text-white transition-colors duration-200"
+              >
+                {link.label}
+              </a>
+            )
+          )}
         </div>
 
         <button

@@ -1,6 +1,6 @@
 function About() {
   return (
-    <section className="bg-black text-white px-6 py-20 md:py-32 border-t border-gray-900">
+    <section className="bg-black text-white px-6 py-14 md:py-20 border-t border-gray-900">
       <div className="max-w-5xl mx-auto text-center">
         <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-8">
           About Booty Bands Fitness
