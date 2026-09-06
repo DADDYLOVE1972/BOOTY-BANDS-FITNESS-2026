@@ -15,3 +15,16 @@ The React Compiler is not enabled on this template because of its impact on dev 
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
 "# BOOTY-BANDS-FITNESS-2026" 
+
+## Deployment configuration
+
+Frontend (optional):
+
+- `VITE_CHECKOUT_API_URL` defaults to the production Render backend.
+
+Backend:
+
+- `STRIPE_SECRET_KEY` is required for checkout.
+- `STRIPE_WEBHOOK_SECRET` is required to verify Stripe webhook events.
+- `SITE_URL` controls successful and cancelled checkout redirects.
+- `ALLOWED_ORIGINS` is an optional comma-separated frontend origin list.

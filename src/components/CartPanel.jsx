@@ -1,5 +1,10 @@
 import { useState } from "react";
 
+const CHECKOUT_API_URL = (
+  import.meta.env.VITE_CHECKOUT_API_URL ||
+  "https://booty-bands-fitness-2026-1.onrender.com"
+).replace(/\/$/, "");
+
 function CartPanel({ open, setOpen, cart, setCart }) {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState(null);
@@ -32,14 +37,14 @@ function CartPanel({ open, setOpen, cart, setCart }) {
   );
 
   const handleCheckout = async () => {
-    if (isCheckingOut) return;
+    if (isCheckingOut || cart.length === 0) return;
 
     setIsCheckingOut(true);
     setCheckoutError(null);
 
     try {
       const response = await fetch(
-        "https://booty-bands-fitness-2026-1.onrender.com/create-checkout-session",
+        `${CHECKOUT_API_URL}/create-checkout-session`,
         {
           method: "POST",
           headers: {
