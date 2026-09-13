@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import CartPanel from "../components/CartPanel";
+import Footer from "../components/Footer";
 import Products from "../components/Products";
 import fallback from "../assets/fallbackIMG.jpeg";
 
@@ -55,6 +56,8 @@ export default function Shop() {
                 <Products setCart={setCart} />
 
             </main>
+
+            <Footer />
 
             <CartPanel
                 open={open}

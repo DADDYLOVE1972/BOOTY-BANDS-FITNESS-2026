@@ -53,18 +53,23 @@ function FAQ() {
                   </button>
                 </h3>
 
+                {/* Grid-rows animation trick: transitioning 0fr -> 1fr
+                    animates height smoothly without knowing the content's
+                    height in advance. The old `hidden` attribute forced an
+                    instant display:none, which made the accordion snap
+                    open/closed instead of animating despite the
+                    transition classes being present. */}
                 <div
                   id={panelId}
                   role="region"
                   aria-labelledby={buttonId}
-                  hidden={!isOpen}
-                  className={`px-6 overflow-hidden transition-all duration-300 ${isOpen ? "pb-4" : "pb-0"}`}
+                  aria-hidden={!isOpen}
+                  className={`grid px-6 transition-all duration-300 ease-in-out ${isOpen ? "grid-rows-[1fr] opacity-100 pb-4" : "grid-rows-[0fr] opacity-0 pb-0"
+                    }`}
                 >
-                  {isOpen && (
-                    <p className="text-gray-300 text-sm md:text-base leading-relaxed border-t border-white/10 pt-4">
-                      {faq.answer}
-                    </p>
-                  )}
+                  <p className="overflow-hidden text-gray-300 text-sm md:text-base leading-relaxed border-t border-white/10 pt-4">
+                    {faq.answer}
+                  </p>
                 </div>
               </div>
             );

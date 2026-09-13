@@ -1,6 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 function Navbar({ cartCount, setOpen }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const navLinks = [
     { label: "Home", href: "#home" },
     { label: "Shop", href: "#featured-products" },
@@ -11,6 +14,18 @@ function Navbar({ cartCount, setOpen }) {
 
   const scrollTo = (event, href) => {
     event.preventDefault();
+
+    if (location.pathname !== "/") {
+      // These sections only exist on the homepage (Home.jsx) — if we're
+      // anywhere else (e.g. /shop), navigate home first, then scroll once
+      // it's mounted.
+      navigate("/");
+      setTimeout(() => {
+        document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+      }, 150);
+      return;
+    }
+
     document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
   };
 

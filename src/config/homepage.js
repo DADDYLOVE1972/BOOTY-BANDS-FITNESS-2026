@@ -20,7 +20,7 @@ export const homepageConfig = {
   },
 
   whyChoose: {
-    heading: "Why Customers Love Booty Bbands Fitness",
+    heading: "Why Customers Love Booty Bands Fitness",
     features: [
       { icon: "\u{1F4AA}", title: "5 Resistance Levels" },
       { icon: "\u{1F3CB}", title: "Full Body Workouts" },

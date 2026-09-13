@@ -10,8 +10,35 @@ if (!stripeSecretKey) {
 
 const stripe = require("stripe")(stripeSecretKey || "sk_test_missing");
 
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+if (!webhookSecret) {
+  console.warn("STRIPE_WEBHOOK_SECRET is missing. Webhook events will be rejected until it is set.");
+}
+
 const SITE_URL =
   process.env.SITE_URL || "https://booty-bands-fitness-2026-7hia.vercel.app";
+
+// Optional CORS allowlist. If ALLOWED_ORIGINS is unset, all origins are
+// allowed (same behavior as before) — set it to a comma-separated list
+// (e.g. "https://bootybandsfitness.com,https://www.bootybandsfitness.com")
+// to restrict it in production.
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
+  : null;
+
+const corsOptions = allowedOrigins
+  ? {
+    origin: (origin, callback) => {
+      // requests with no origin (curl, server-to-server, Stripe webhooks)
+      // are always allowed through
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+  }
+  : undefined;
 
 const PRODUCT_CATALOG = {
   "starter-kit-fabric-bands": {
@@ -54,11 +81,31 @@ app.get("/health", (req, res) => {
   res.json({
     ok: true,
     stripeMode: stripeSecretKey?.startsWith("sk_live_") ? "live" : "test-or-missing",
+    stripeConfigured: Boolean(stripeSecretKey),
+    webhookConfigured: Boolean(webhookSecret),
+    siteUrl: SITE_URL,
+    corsRestricted: Boolean(allowedOrigins),
   });
 });
 
+// IMPORTANT: this route must be registered with express.raw() BEFORE
+// app.use(express.json()) below, since Stripe's signature verification
+// needs the exact raw request bytes — not a parsed object.
 app.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
-  const event = req.body;
+  const signature = req.headers["stripe-signature"];
+
+  let event;
+  try {
+    if (!webhookSecret) {
+      throw new Error("STRIPE_WEBHOOK_SECRET is not configured on the server.");
+    }
+    // constructEvent both verifies the request really came from Stripe
+    // AND parses the raw buffer into a usable event object.
+    event = stripe.webhooks.constructEvent(req.body, signature, webhookSecret);
+  } catch (err) {
+    console.error("Webhook signature verification failed:", err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
@@ -77,7 +124,7 @@ app.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
   res.json({ received: true });
 });
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.post("/create-checkout-session", async (req, res) => {
@@ -129,7 +176,7 @@ app.post("/create-checkout-session", async (req, res) => {
           .join(","),
       },
 
-      success_url: `${SITE_URL}/success`,
+      success_url: `${SITE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${SITE_URL}/cancel`,
     });
 

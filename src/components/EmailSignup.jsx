@@ -8,6 +8,10 @@ function EmailSignup() {
           Use Discount Code BOOTY20
         </h2>
 
+        <p className="mb-6 text-gray-600">
+          Save 20% on your first order at checkout.
+        </p>
+
         <input
           placeholder="Enter your email"
           className="border p-3 w-full mb-4 rounded-lg"

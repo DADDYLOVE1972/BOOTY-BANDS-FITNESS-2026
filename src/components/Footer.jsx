@@ -1,13 +1,28 @@
 import { homepageConfig } from "../config/homepage";
-import { Music2 } from "lucide-react";
+import { Camera, CirclePlay, Music2, Users } from "lucide-react";
 
 function Footer() {
   const { brand, supportEmail, tagline, quickLinks, policies } = homepageConfig.footer;
   const socialLinks = [
     {
       label: "TikTok",
-      href: "https://www.tiktok.com/@bootybandsfitness",
+      href: "#",
       icon: Music2,
+    },
+    {
+      label: "Instagram",
+      href: "#",
+      icon: Camera,
+    },
+    {
+      label: "Facebook",
+      href: "#",
+      icon: Users,
+    },
+    {
+      label: "YouTube",
+      href: "#",
+      icon: CirclePlay,
     },
   ];
 
@@ -37,17 +52,15 @@ function Footer() {
                 {supportEmail}
               </a>
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-wrap gap-3" aria-label="Social media links">
               {socialLinks.map(({ label, href, icon: Icon }) => (
                 <a
                   key={label}
                   href={href}
                   aria-label={label}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-gray-300 transition-all duration-200 hover:-translate-y-1 hover:border-white/30 hover:bg-white hover:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-gray-300 transition-all duration-200 hover:-translate-y-1 hover:border-white/30 hover:bg-white hover:text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 >
-                  <Icon className="h-4 w-4" aria-hidden="true" />
+                  <Icon className="h-5 w-5" aria-hidden="true" />
                 </a>
               ))}
             </div>
