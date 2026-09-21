@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const https = require("https");
 
 const app = express();
 
@@ -14,6 +15,27 @@ if (!stripeWebhookSecret) {
 }
 
 const stripe = require("stripe")(stripeSecretKey || "sk_test_missing");
+
+/* =========================================================
+   BREVO CONFIGURATION
+========================================================= */
+
+const brevoApiKey = process.env.BREVO_API_KEY;
+const brevoSenderEmail = process.env.BREVO_SENDER_EMAIL;
+const brevoSenderName =
+  process.env.BREVO_SENDER_NAME || "Booty Bands Fitness";
+
+if (!brevoApiKey) {
+  console.warn(
+    "BREVO_API_KEY is missing. Order confirmation emails will not be sent."
+  );
+}
+
+if (!brevoSenderEmail) {
+  console.warn(
+    "BREVO_SENDER_EMAIL is missing. Order confirmation emails will not be sent."
+  );
+}
 
 const SITE_URL =
   process.env.SITE_URL || "https://bootybandsfitness.com";
@@ -43,6 +65,273 @@ const PRODUCT_CATALOG = {
     unitAmount: 4999,
   },
 };
+
+/* =========================================================
+   BREVO EMAIL HELPERS
+========================================================= */
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function formatUsd(amountInCents) {
+  if (!Number.isFinite(amountInCents)) {
+    return "—";
+  }
+
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(amountInCents / 100);
+}
+
+function describeOrderItems(metadataItems) {
+  if (!metadataItems) {
+    return [];
+  }
+
+  return String(metadataItems)
+    .split(",")
+    .map((entry) => {
+      const [productId, rawQuantity] = entry.split(":");
+      const quantity = Number.parseInt(rawQuantity, 10);
+      const product = PRODUCT_CATALOG[productId];
+
+      return {
+        productId,
+        name: product?.name || productId,
+        quantity:
+          Number.isInteger(quantity) && quantity > 0
+            ? quantity
+            : 1,
+      };
+    })
+    .filter((item) => item.productId);
+}
+
+function postJsonToBrevo(payload) {
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify(payload);
+
+    const request = https.request(
+      {
+        hostname: "api.brevo.com",
+        path: "/v3/smtp/email",
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "api-key": brevoApiKey,
+          "content-type": "application/json",
+          "content-length": Buffer.byteLength(body),
+        },
+        timeout: 5000,
+      },
+      (response) => {
+        let responseBody = "";
+
+        response.setEncoding("utf8");
+        response.on("data", (chunk) => {
+          responseBody += chunk;
+        });
+
+        response.on("end", () => {
+          if (
+            response.statusCode >= 200 &&
+            response.statusCode < 300
+          ) {
+            return resolve({
+              statusCode: response.statusCode,
+              body: responseBody,
+            });
+          }
+
+          return reject(
+            new Error(
+              `Brevo API returned ${response.statusCode}: ${responseBody}`
+            )
+          );
+        });
+      }
+    );
+
+    request.on("timeout", () => {
+      request.destroy(
+        new Error("Brevo API request timed out.")
+      );
+    });
+
+    request.on("error", reject);
+    request.write(body);
+    request.end();
+  });
+}
+
+async function sendOrderConfirmationEmail(session) {
+  if (!brevoApiKey || !brevoSenderEmail) {
+    throw new Error(
+      "Brevo email configuration is incomplete."
+    );
+  }
+
+  const customerEmail =
+    session.customer_details?.email ||
+    session.customer_email;
+
+  if (!customerEmail) {
+    throw new Error(
+      "Stripe Checkout session does not contain a customer email."
+    );
+  }
+
+  const customerName =
+    session.customer_details?.name || "Customer";
+
+  const items = describeOrderItems(
+    session.metadata?.items
+  );
+
+  const amount = formatUsd(session.amount_total);
+  const orderReference = session.id;
+
+  const itemRows =
+    items.length > 0
+      ? items
+        .map(
+          (item) => `
+              <tr>
+                <td style="padding:10px 0;border-bottom:1px solid #e5e7eb;">
+                  ${escapeHtml(item.name)}
+                </td>
+                <td style="padding:10px 0;border-bottom:1px solid #e5e7eb;text-align:right;">
+                  Qty ${escapeHtml(item.quantity)}
+                </td>
+              </tr>`
+        )
+        .join("")
+      : `
+          <tr>
+            <td style="padding:10px 0;">
+              Your Booty Bands Fitness order
+            </td>
+            <td></td>
+          </tr>`;
+
+  const textItems =
+    items.length > 0
+      ? items
+        .map(
+          (item) =>
+            `- ${item.name} (Qty ${item.quantity})`
+        )
+        .join("\n")
+      : "- Your Booty Bands Fitness order";
+
+  const htmlContent = `
+    <!doctype html>
+    <html>
+      <body style="margin:0;padding:0;background:#f5f5f5;font-family:Arial,Helvetica,sans-serif;color:#111827;">
+        <div style="max-width:640px;margin:0 auto;padding:32px 16px;">
+          <div style="background:#111111;color:#ffffff;padding:26px 28px;border-radius:14px 14px 0 0;text-align:center;">
+            <div style="font-size:14px;letter-spacing:2px;text-transform:uppercase;">
+              Booty Bands Fitness
+            </div>
+            <h1 style="margin:12px 0 0;font-size:28px;">
+              Order confirmed 🎉
+            </h1>
+          </div>
+
+          <div style="background:#ffffff;padding:30px 28px;border-radius:0 0 14px 14px;">
+            <p style="font-size:16px;line-height:1.6;margin-top:0;">
+              Hi ${escapeHtml(customerName)},
+            </p>
+
+            <p style="font-size:16px;line-height:1.6;">
+              Thank you for your order. Your payment was successful and we're preparing your Booty Bands Fitness order.
+            </p>
+
+            <table style="width:100%;border-collapse:collapse;margin:24px 0;">
+              <tbody>
+                ${itemRows}
+              </tbody>
+            </table>
+
+            <div style="background:#f9fafb;border-radius:10px;padding:18px;margin:22px 0;">
+              <div style="margin-bottom:8px;">
+                <strong>Total paid:</strong> ${escapeHtml(amount)}
+              </div>
+              <div style="word-break:break-all;">
+                <strong>Order reference:</strong> ${escapeHtml(orderReference)}
+              </div>
+            </div>
+
+            <p style="font-size:15px;line-height:1.6;">
+              You'll receive shipping and tracking updates as soon as your order ships.
+            </p>
+
+            <p style="font-size:15px;line-height:1.6;">
+              Questions? Reply to this email or contact
+              <a href="mailto:${escapeHtml(
+    brevoSenderEmail
+  )}" style="color:#111827;">
+                ${escapeHtml(brevoSenderEmail)}
+              </a>.
+            </p>
+
+            <p style="margin-bottom:0;font-size:15px;line-height:1.6;">
+              Thank you,<br>
+              <strong>Booty Bands Fitness</strong>
+            </p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  const textContent = [
+    `Hi ${customerName},`,
+    "",
+    "Thank you for your order. Your payment was successful and we're preparing your Booty Bands Fitness order.",
+    "",
+    "Items:",
+    textItems,
+    "",
+    `Total paid: ${amount}`,
+    `Order reference: ${orderReference}`,
+    "",
+    "You'll receive shipping and tracking updates as soon as your order ships.",
+    "",
+    `Questions? Reply to this email or contact ${brevoSenderEmail}.`,
+    "",
+    "Thank you,",
+    "Booty Bands Fitness",
+  ].join("\n");
+
+  return postJsonToBrevo({
+    sender: {
+      name: brevoSenderName,
+      email: brevoSenderEmail,
+    },
+    to: [
+      {
+        email: customerEmail,
+        name: customerName,
+      },
+    ],
+    replyTo: {
+      email: brevoSenderEmail,
+      name: brevoSenderName,
+    },
+    subject:
+      "Your Booty Bands Fitness order is confirmed 🎉",
+    htmlContent,
+    textContent,
+  });
+}
 
 function normalizeCart(cart) {
   if (!Array.isArray(cart) || cart.length === 0) {
@@ -74,6 +363,7 @@ app.get("/health", (req, res) => {
     stripeMode: stripeSecretKey?.startsWith("sk_live_") ? "live" : "test-or-missing",
     stripeConfigured: Boolean(stripeSecretKey),
     webhookConfigured: Boolean(stripeWebhookSecret),
+    brevoConfigured: Boolean(brevoApiKey && brevoSenderEmail),
     siteUrl: SITE_URL,
     corsRestricted: Boolean(process.env.ALLOWED_ORIGINS),
   });
@@ -82,7 +372,7 @@ app.get("/health", (req, res) => {
 // IMPORTANT: this route must be registered with express.raw() BEFORE
 // app.use(express.json()) below, since Stripe's signature verification
 // needs the exact raw request bytes — not a parsed object.
-app.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
+app.post("/webhook", express.raw({ type: "application/json" }), async (req, res) => {
   if (!stripeWebhookSecret) {
     console.error("STRIPE_WEBHOOK_SECRET is missing.");
     return res.status(503).json({ error: "Webhook is not configured." });
@@ -106,16 +396,31 @@ app.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
 
     console.log("NEW ORDER RECEIVED:");
     console.log({
+      stripeSessionId: session.id,
       email: session.customer_details?.email,
       name: session.customer_details?.name,
-      amount: session.amount_total / 100,
+      amount: session.amount_total ? session.amount_total / 100 : null,
       address: session.customer_details?.address,
       phone: session.customer_details?.phone,
       items: session.metadata?.items,
     });
+
+    try {
+      const brevoResponse = await sendOrderConfirmationEmail(session);
+      console.log("ORDER CONFIRMATION EMAIL SENT:", {
+        stripeSessionId: session.id,
+        email: session.customer_details?.email || session.customer_email,
+        brevoStatus: brevoResponse.statusCode,
+      });
+    } catch (error) {
+      console.error("ORDER CONFIRMATION EMAIL FAILED:", {
+        stripeSessionId: session.id,
+        message: error.message,
+      });
+    }
   }
 
-  res.json({ received: true });
+  return res.json({ received: true });
 });
 
 app.use(
