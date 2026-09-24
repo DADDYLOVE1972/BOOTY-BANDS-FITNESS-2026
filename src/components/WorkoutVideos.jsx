@@ -6,7 +6,7 @@ import { Play } from "lucide-react";
 const workouts = [
   {
     name: "Squats",
-    src: "/Workout1.mp4",
+    src: "/workout1.mp4",
     difficulty: "Beginner",
     duration: "45 Seconds",
     sets: "3",
