@@ -11,23 +11,32 @@ import Footer from "../components/Footer";
 import About from "../components/About";
 import WorkoutVideos from "../components/WorkoutVideos";
 import EmailCapture from "../components/EmailCapture";
-import { useState } from "react";
+
+import { useState, useContext } from "react";
+import { CartContext } from "../context/CartContext";
 
 function Home() {
-  const [cart, setCart] = useState([]);
+  const { cart, setCart } = useContext(CartContext);
   const [open, setOpen] = useState(false);
 
   return (
     <div className="bg-black text-white">
-      <Navbar cartCount={cart.length} setOpen={setOpen} />
+      <Navbar
+        cartCount={cart.reduce(
+          (total, item) => total + (item.quantity || 1),
+          0
+        )}
+        setOpen={setOpen}
+      />
 
       <main className="pt-28 lg:pt-20">
         <Hero />
         <TrustBar />
+
         <FeaturedProducts setCart={setCart} />
+
         <EverythingIncluded />
         <WhyChoose />
-
         <Reviews />
         <About />
         <WorkoutVideos />

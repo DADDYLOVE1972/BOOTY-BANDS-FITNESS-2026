@@ -1,21 +1,33 @@
-import { createContext, useState } from "react"
+import { createContext, useEffect, useState } from "react";
 
-export const CartContext = createContext()
+export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState([])
+  const [cart, setCart] = useState(() => {
+    try {
+      const savedCart = localStorage.getItem("bootyBandsCart");
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch {
+      return [];
+    }
+  });
 
-  const addToCart = (product) => {
-    setCartItems((prev) => [...prev, product])
-  }
-
-  const removeFromCart = (index) => {
-    setCartItems((prev) => prev.filter((_, i) => i !== index))
-  }
+  useEffect(() => {
+    try {
+      localStorage.setItem("bootyBandsCart", JSON.stringify(cart));
+    } catch (error) {
+      console.error("Could not save cart:", error);
+    }
+  }, [cart]);
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart }}>
+    <CartContext.Provider
+      value={{
+        cart,
+        setCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
-  )
-}
+  );
+};
