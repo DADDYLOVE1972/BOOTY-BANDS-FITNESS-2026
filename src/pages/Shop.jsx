@@ -30,8 +30,8 @@ export default function Shop() {
                     <img
                         src={fallback}
                         alt="Booty Bands Fitness"
-                        className="absolute inset-0 w-full h-full object-cover-object-top"
-                    />
+                        className="absolute inset-0 w-full h-full object-cover object-top"
+                    />              
 
                     {/* Dark Overlay */}
                     <div className="absolute inset-0 bg-black/50">
