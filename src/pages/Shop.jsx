@@ -1,25 +1,14 @@
-import { useState, useContext } from "react";
 import Navbar from "../components/Navbar";
-import CartPanel from "../components/CartPanel";
 import Footer from "../components/Footer";
 import Products from "../components/Products";
-import { CartContext } from "../context/CartContext";
 import fallback from "../assets/fallbackIMG.jpeg";
 
 
 export default function Shop() {
-    const { cart, setCart } = useContext(CartContext);
-    const [open, setOpen] = useState(false);
 
     return (
         <>
-            <Navbar
-                cartCount={cart.reduce(
-                    (total, item) => total + (item.quantity || 1),
-                    0
-                )}
-                setOpen={setOpen}
-            />
+            <Navbar />
 
             <main className="min-h-screen bg-white pt-28 lg:pt-20">
 
@@ -60,18 +49,12 @@ export default function Shop() {
                 </section>
 
                 {/* Products */}
-                <Products setCart={setCart} />
+                <Products />
 
             </main>
 
             <Footer />
 
-            <CartPanel
-                open={open}
-                setOpen={setOpen}
-                cart={cart}
-                setCart={setCart}
-            />
         </>
     );
 }
