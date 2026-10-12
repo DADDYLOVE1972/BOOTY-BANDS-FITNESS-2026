@@ -11,6 +11,7 @@ import Footer from "../components/Footer";
 import About from "../components/About";
 import WorkoutVideos from "../components/WorkoutVideos";
 import EmailCapture from "../components/EmailCapture";
+import FlyerCollection from "../components/FlyerCollection";
 
 import { useState, useContext } from "react";
 import { CartContext } from "../context/CartContext";
@@ -33,6 +34,7 @@ function Home() {
         <Hero />
         <TrustBar />
 
+        <FlyerCollection />
         <FeaturedProducts setCart={setCart} />
 
         <EverythingIncluded />
