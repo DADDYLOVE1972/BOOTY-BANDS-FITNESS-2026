@@ -7,12 +7,12 @@ export const homepageConfig = {
     eyebrow: "Curated for Results",
     heading: "Featured Products",
     subheading:
-      "Our most-loved resistance bands engineered for comfort, durability, and real results.",
+      "Explore our resistance bands engineered for comfort, durability, and real results.",
   },
 
   trustBar: {
     items: [
-      { icon: "\u2B50", label: "Trusted by 1,000+ customers" },
+      { icon: "\u2B50", label: "Train Anywhere" },
       { icon: "\u2713", label: "30-Day Money Back Guarantee" },
       { icon: "\u{1F69A}", label: "Fast Shipping" },
       { icon: "\u{1F512}", label: "Secure Checkout" },
