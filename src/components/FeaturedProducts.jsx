@@ -50,12 +50,6 @@ function FeaturedProducts({ setCart }) {
                     {item.description}
                   </p>
 
-                  <p
-                    className="text-yellow-400 mb-2"
-                    aria-label="5 out of 5 stars"
-                  >
-                    {"\u2605".repeat(5)}
-                  </p>
 
                   {item.features?.length > 0 && (
                     <ul className="text-left text-gray-700 mb-3 space-y-1.5 text-sm">
