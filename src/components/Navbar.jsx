@@ -63,15 +63,14 @@ function Navbar({ cartCount, setOpen }) {
           )}
         </div>
 
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
+        <a
+          href="https://shop.bootybandsfitness.com/cart"
           className="shrink-0 inline-flex items-center justify-center gap-2 bg-white text-black px-4 py-2.5 rounded-full font-bold hover:bg-gray-200 hover:scale-105 transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-          aria-label={`Open cart with ${cartCount} items`}
+          aria-label="Open Shopify cart"
         >
           <span aria-hidden="true">{"\u{1F6D2}"}</span>
-          <span>({cartCount})</span>
-        </button>
+          <span>Cart</span>
+        </a>
       </div>
     </nav>
   );
