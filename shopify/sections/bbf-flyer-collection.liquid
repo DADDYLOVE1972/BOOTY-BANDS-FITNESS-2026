@@ -1,0 +1,35 @@
+{% comment %} Booty Bands Fitness flyer-inspired collection section. Uses actual Shopify collection product data. {% endcomment %}
+<section class="bbf-flyer">
+  <div class="bbf-flyer__wrap">
+    <p class="bbf-flyer__eyebrow">TRAIN ANYWHERE • BUILD STRENGTH</p>
+    <h2>{{ section.settings.heading | escape }}</h2>
+    <p class="bbf-flyer__intro">{{ section.settings.description | escape }}</p>
+    {% assign featured = section.settings.collection %}
+    {% if featured != blank %}
+      <div class="bbf-flyer__grid">
+        {% for product in featured.products limit: 3 %}
+          <article class="bbf-flyer__card">
+            <a href="{{ product.url }}" class="bbf-flyer__image">
+              {% if product.featured_image %}
+                {{ product.featured_image | image_url: width: 720 | image_tag: loading: 'lazy', alt: product.title }}
+              {% endif %}
+            </a>
+            <div class="bbf-flyer__body">
+              <h3><a href="{{ product.url }}">{{ product.title | escape }}</a></h3>
+              <p>{{ product.price | money }}</p>
+              <a class="bbf-flyer__button" href="{{ product.url }}">View product</a>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="bbf-flyer__empty">Select a collection in the theme editor to display your products.</p>
+    {% endif %}
+  </div>
+</section>
+<style>
+.bbf-flyer{background:#0b0b0d;color:#fff;padding:72px 22px}.bbf-flyer__wrap{max-width:1200px;margin:auto}.bbf-flyer__eyebrow{color:#ff4da1;letter-spacing:.18em;text-align:center;font-size:13px;font-weight:800}.bbf-flyer h2{text-align:center;font-size:clamp(32px,5vw,64px);line-height:1.1;margin:14px 0;text-transform:uppercase;font-weight:900}.bbf-flyer__intro{text-align:center;color:#ddd;margin-bottom:36px}.bbf-flyer__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.bbf-flyer__card{background:#1b1b20;border:1px solid #65334b;border-radius:18px;overflow:hidden}.bbf-flyer__image{display:block;background:white;aspect-ratio:4/3}.bbf-flyer__image img{width:100%;height:100%;object-fit:contain}.bbf-flyer__body{padding:24px}.bbf-flyer__body h3{font-size:21px;margin:0 0 10px}.bbf-flyer__body a{color:inherit;text-decoration:none}.bbf-flyer__body p{font-size:20px}.bbf-flyer__button{display:block;text-align:center;background:#ff2791;color:white!important;padding:13px 20px;border-radius:30px;font-weight:800;margin-top:20px}.bbf-flyer__empty{text-align:center;color:#ddd}@media(max-width:749px){.bbf-flyer__grid{grid-template-columns:1fr}.bbf-flyer{padding:48px 16px}}
+</style>
+{% schema %}
+{"name":"BBF Flyer Collection","settings":[{"type":"text","id":"heading","label":"Heading","default":"Find your strength"},{"type":"text","id":"description","label":"Description","default":"Premium resistance bands for every workout."},{"type":"collection","id":"collection","label":"Featured collection"}],"presets":[{"name":"BBF Flyer Collection"}]}
+{% endschema %}
