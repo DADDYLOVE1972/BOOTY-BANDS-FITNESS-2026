@@ -31,14 +31,6 @@ function Products({ setCart }) {
                   </h3>
                   <p className="text-gray-500 mb-2">{item.description}</p>
 
-                  <div className="flex justify-center items-center gap-2 mb-3">
-                    <span className="text-yellow-400 text-lg">
-                      {"★".repeat(5)}
-                    </span>
-                    <span className="text-sm font-medium text-gray-600">
-                      {item.rating} ({item.reviews} Reviews)
-                    </span>
-                  </div>
 
                   <div className="mb-4">
                     {item.compareAtPrice && (
