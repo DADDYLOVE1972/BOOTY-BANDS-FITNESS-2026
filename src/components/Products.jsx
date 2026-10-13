@@ -1,11 +1,7 @@
 ﻿import { products } from "../data/products";
-import { addItemToCart } from "../utils/cart";
 
 
 function Products({ setCart }) {
-  const addToCart = (item) => {
-    addItemToCart(setCart, item);
-  };
 
   return (
     <section id="products" className="py-12 md:py-16 px-6 bg-gradient-to-b from-gray-50 to-white">
@@ -35,14 +31,6 @@ function Products({ setCart }) {
                   </h3>
                   <p className="text-gray-500 mb-2">{item.description}</p>
 
-                  <div className="flex justify-center items-center gap-2 mb-3">
-                    <span className="text-yellow-400 text-lg">
-                      {"★".repeat(5)}
-                    </span>
-                    <span className="text-sm font-medium text-gray-600">
-                      {item.rating} ({item.reviews} Reviews)
-                    </span>
-                  </div>
 
                   <div className="mb-4">
                     {item.compareAtPrice && (
@@ -64,18 +52,14 @@ function Products({ setCart }) {
                     </ul>
                   )}
                   <hr className="my-5 border-gray-200" />
-                  <button
-                    type="button"
-                    onClick={() => addToCart(item)}
+                  <a
+                    href={item.shopifyUrl}
                     className="w-full bg-black text-white py-3 rounded-full hover:bg-gray-800 hover:scale-105 transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
-                    aria-label={`Add ${item.name} to cart for $${item.price}`}
+                    aria-label={`View ${item.name} on Shopify`}
                   >
-                    🛒 Add to Cart
-                  </button>
+                    View product on Shopify
+                  </a>
 
-                  <p className="text-xs text-red-500 mt-2 animate-pulse">
-                    {"\u{1F525}"} Only a few left in stock
-                  </p>
 
                   <p className="text-xs text-gray-400 mt-1">
                     {"\u2713"} Secure Checkout {"\u2022"} {"\u2713"} 30-Day Guarantee

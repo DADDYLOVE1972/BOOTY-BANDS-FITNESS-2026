@@ -1,5 +1,4 @@
 import Navbar from "../components/Navbar";
-import CartPanel from "../components/CartPanel";
 import Hero from "../components/Hero";
 import FeaturedProducts from "../components/FeaturedProducts";
 import EverythingIncluded from "../components/EverythingIncluded";
@@ -13,29 +12,19 @@ import WorkoutVideos from "../components/WorkoutVideos";
 import EmailCapture from "../components/EmailCapture";
 import FlyerCollection from "../components/FlyerCollection";
 
-import { useState, useContext } from "react";
-import { CartContext } from "../context/CartContext";
 
 function Home() {
-  const { cart, setCart } = useContext(CartContext);
-  const [open, setOpen] = useState(false);
 
   return (
     <div className="bg-black text-white">
-      <Navbar
-        cartCount={cart.reduce(
-          (total, item) => total + (item.quantity || 1),
-          0
-        )}
-        setOpen={setOpen}
-      />
+      <Navbar />
 
       <main className="pt-28 lg:pt-20">
         <Hero />
         <TrustBar />
 
         <FlyerCollection />
-        <FeaturedProducts setCart={setCart} />
+        <FeaturedProducts />
 
         <EverythingIncluded />
         <WhyChoose />
@@ -48,12 +37,6 @@ function Home() {
 
       <Footer />
 
-      <CartPanel
-        open={open}
-        setOpen={setOpen}
-        cart={cart}
-        setCart={setCart}
-      />
     </div>
   );
 }

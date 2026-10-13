@@ -1,14 +1,10 @@
 import { featuredProducts } from "../data/products";
 import { homepageConfig } from "../config/homepage";
-import { addItemToCart } from "../utils/cart";
 import { memo } from "react";
 
 function FeaturedProducts({ setCart }) {
   const { eyebrow, heading, subheading } = homepageConfig.featuredProducts;
 
-  const shopNow = (item) => {
-    addItemToCart(setCart, item);
-  };
 
   return (
     <section
@@ -54,12 +50,6 @@ function FeaturedProducts({ setCart }) {
                     {item.description}
                   </p>
 
-                  <p
-                    className="text-yellow-400 mb-2"
-                    aria-label="5 out of 5 stars"
-                  >
-                    {"\u2605".repeat(5)}
-                  </p>
 
                   {item.features?.length > 0 && (
                     <ul className="text-left text-gray-700 mb-3 space-y-1.5 text-sm">
@@ -87,14 +77,13 @@ function FeaturedProducts({ setCart }) {
                       ${item.price}
                     </p>
 
-                    <button
-                      type="button"
-                      onClick={() => shopNow(item)}
+                    <a
+                      href={item.shopifyUrl}
                       
                       className="w-full bg-black text-white py-3 rounded-full hover:bg-gray-800 hover:scale-105 transition duration-200"
                     >
-                      Add To Cart
-                    </button>
+                      View product on Shopify
+                    </a>
                   </div>
                 </div>
               </article>
