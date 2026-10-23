@@ -1,6 +1,12 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useContext, useState } from "react";
+import { CartContext } from "../context/CartContext";
+import CartPanel from "./CartPanel";
 
-function Navbar({ cartCount, setOpen }) {
+function Navbar() {
+  const { cart, setCart } = useContext(CartContext);
+  const [cartOpen, setCartOpen] = useState(false);
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -30,6 +36,7 @@ function Navbar({ cartCount, setOpen }) {
   };
 
   return (
+    <>
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 text-white py-4 px-5 md:px-6 border-b border-gray-800 backdrop-blur-xl">
       <div className="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-4">
         <a
@@ -63,16 +70,19 @@ function Navbar({ cartCount, setOpen }) {
           )}
         </div>
 
-        <a
-          href="https://shop.bootybandsfitness.com/cart"
+        <button
+          type="button"
+          onClick={() => setCartOpen(true)}
           className="shrink-0 inline-flex items-center justify-center gap-2 bg-white text-black px-4 py-2.5 rounded-full font-bold hover:bg-gray-200 hover:scale-105 transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-          aria-label="Open Shopify cart"
+          aria-label={`Open cart with ${cartCount} items`}
         >
           <span aria-hidden="true">{"\u{1F6D2}"}</span>
-          <span>Cart</span>
-        </a>
+          <span>Cart{cartCount > 0 ? ` (${cartCount})` : ""}</span>
+        </button>
       </div>
     </nav>
+    <CartPanel open={cartOpen} setOpen={setCartOpen} cart={cart} setCart={setCart} />
+  </> 
   );
 }
 
