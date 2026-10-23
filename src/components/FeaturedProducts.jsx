@@ -1,8 +1,17 @@
 import { featuredProducts } from "../data/products";
 import { homepageConfig } from "../config/homepage";
-import { memo } from "react";
+import { memo, useContext } from "react";
+import { CartContext } from "../context/CartContext";
 
-function FeaturedProducts({ setCart }) {
+function FeaturedProducts() {
+  const { setCart } = useContext(CartContext);
+  const addToCart = (item) => {
+    setCart((previous) => {
+      const existing = previous.find((entry) => entry.id === item.id);
+      if (existing) return previous.map((entry) => entry.id === item.id ? { ...entry, quantity: entry.quantity + 1 } : entry);
+      return [...previous, { id: item.id, productId: item.productId || item.id, name: item.name, price: item.price, quantity: 1 }];
+    });
+  };
   const { eyebrow, heading, subheading } = homepageConfig.featuredProducts;
 
 
@@ -77,13 +86,14 @@ function FeaturedProducts({ setCart }) {
                       ${item.price}
                     </p>
 
-                    <a
-                      href={item.shopifyUrl}
-                      
+                    <button
+                      type="button"
+                      onClick={() => addToCart(item)}
                       className="w-full bg-black text-white py-3 rounded-full hover:bg-gray-800 hover:scale-105 transition duration-200"
+                      aria-label={`Add ${item.name} to cart`}
                     >
-                      View product on Shopify
-                    </a>
+                      Add to Cart
+                    </button>
                   </div>
                 </div>
               </article>
