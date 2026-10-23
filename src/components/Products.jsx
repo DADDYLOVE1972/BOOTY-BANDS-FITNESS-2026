@@ -1,7 +1,18 @@
-﻿import { products } from "../data/products";
+﻿import { useContext } from "react";
+import { CartContext } from "../context/CartContext";
+import { products } from "../data/products";
 
 
-function Products({ setCart }) {
+function Products() {
+  const { setCart } = useContext(CartContext);
+
+  const addToCart = (item) => {
+    setCart((previous) => {
+      const existing = previous.find((entry) => entry.id === item.id);
+      if (existing) return previous.map((entry) => entry.id === item.id ? { ...entry, quantity: entry.quantity + 1 } : entry);
+      return [...previous, { id: item.id, productId: item.productId || item.id, name: item.name, price: item.price, quantity: 1 }];
+    });
+  };
 
   return (
     <section id="products" className="py-12 md:py-16 px-6 bg-gradient-to-b from-gray-50 to-white">
@@ -52,13 +63,14 @@ function Products({ setCart }) {
                     </ul>
                   )}
                   <hr className="my-5 border-gray-200" />
-                  <a
-                    href={item.shopifyUrl}
+                  <button
+                    type="button"
+                    onClick={() => addToCart(item)}
                     className="w-full bg-black text-white py-3 rounded-full hover:bg-gray-800 hover:scale-105 transition duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2"
-                    aria-label={`View ${item.name} on Shopify`}
+                    aria-label={`Add ${item.name} to cart`}
                   >
-                    View product on Shopify
-                  </a>
+                    Add to Cart
+                  </button>
 
 
                   <p className="text-xs text-gray-400 mt-1">
