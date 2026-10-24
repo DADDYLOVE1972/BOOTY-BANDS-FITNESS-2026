@@ -6,7 +6,6 @@ export const featuredProducts = [
   {
     id: "starter-kit-fabric-bands",
     productId: "starter-kit-fabric-bands",
-    shopifyUrl: "https://shop.bootybandsfitness.com/products/booty-bands-fitness-starter-kit",
     name: "Booty Bands Fitness Starter Kit - 3 Non-Slip Fabric Resistance Bands",
     price: "39.99",
     compareAtPrice: "49.99",
@@ -24,7 +23,6 @@ export const featuredProducts = [
   {
     id: "latex-5-level-band-set",
     productId: "latex-5-level-band-set",
-    shopifyUrl: "https://shop.bootybandsfitness.com/products/booty-bands-fitness-latex-resistance-bands",
     name: "Booty Bands Fitness Latex Resistance Bands - 5 Level Workout Set",
     price: "29.99",
     compareAtPrice: "39.99",
@@ -42,7 +40,6 @@ export const featuredProducts = [
   {
     id: "full-body-training-bundle",
     productId: "full-body-training-bundle",
-    shopifyUrl: "https://shop.bootybandsfitness.com/products/booty-bands-fitness-full-body-training-bundle",
     name: "Booty Bands Fitness Full Body Training Bundle - Resistance Bands With Handles",
     price: "49.99",
     compareAtPrice: "59.99",
