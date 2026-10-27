@@ -333,6 +333,35 @@ async function sendOrderConfirmationEmail(session) {
   });
 }
 
+async function sendOwnerAlert(session) {
+  if (!brevoApiKey || !brevoSenderEmail) throw new Error("Brevo is not configured.");
+  const email = process.env.ORDER_ALERT_EMAIL || "support@bootybandsfitness.com";
+  const details = session.customer_details || {};
+  const shipping = session.shipping_details || session.collected_information?.shipping_details;
+  const address = shipping?.address || details.address || {};
+  const items = describeOrderItems(session.metadata?.items);
+  const message = [
+    "New paid order — Booty Bands Fitness",
+    "Stripe reference: " + session.id,
+    "Total: " + formatUsd(session.amount_total),
+    "Customer: " + (details.name || "Not provided"),
+    "Email: " + (details.email || session.customer_email || "Not provided"),
+    "Phone: " + (details.phone || "Not provided"),
+    "Ship to: " + (shipping?.name || details.name || "Not provided"),
+    "Address: " + [address.line1, address.line2, address.city, address.state, address.postal_code, address.country].filter(Boolean).join(", "),
+    "Items:",
+    ...items.map(item => item.name + " (Qty " + item.quantity + ")"),
+    "Verify the order in Stripe before shipping."
+  ].join("\n");
+  return postJsonToBrevo({
+    sender: { name: brevoSenderName, email: brevoSenderEmail },
+    to: [{ email }],
+    subject: "NEW PAID ORDER — BOOTY BANDS FITNESS",
+    textContent: message,
+    htmlContent: "<pre style='font-family:Arial,sans-serif;white-space:pre-wrap'>" + escapeHtml(message) + "</pre>"
+  });
+}
+
 function normalizeCart(cart) {
   if (!Array.isArray(cart) || cart.length === 0) {
     throw new Error("Cart is empty.");
@@ -393,6 +422,7 @@ app.post("/webhook", express.raw({ type: "application/json" }), async (req, res)
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
+    if (session.payment_status !== "paid") return res.json({ received: true });
 
     console.log("NEW ORDER RECEIVED:");
     console.log({
@@ -417,6 +447,12 @@ app.post("/webhook", express.raw({ type: "application/json" }), async (req, res)
         stripeSessionId: session.id,
         message: error.message,
       });
+    }
+    try {
+      await sendOwnerAlert(session);
+      console.log("OWNER ORDER ALERT SENT:", session.id);
+    } catch (error) {
+      console.error("OWNER ORDER ALERT FAILED:", session.id, error.message);
     }
   }
 
