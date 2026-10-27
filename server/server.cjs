@@ -333,13 +333,25 @@ async function sendOrderConfirmationEmail(session) {
   });
 }
 
+// Sandbox-only duplicate suppression. Production needs durable shared storage.
+const notifiedSessions = new Set();
+async function loadOrderItems(session) {
+  try {
+    const result = await stripe.checkout.sessions.listLineItems(session.id, { limit: 100 });
+    if (result.data.length) return result.data.map(item => ({ name: item.description || 'Product', quantity: item.quantity || 1 }));
+  } catch (error) {
+    console.error('Stripe line item lookup failed:', session.id, error.message);
+  }
+  return describeOrderItems(session.metadata?.items);
+}
+
 async function sendOwnerAlert(session) {
   if (!brevoApiKey || !brevoSenderEmail) throw new Error("Brevo is not configured.");
   const email = process.env.ORDER_ALERT_EMAIL || "support@bootybandsfitness.com";
   const details = session.customer_details || {};
   const shipping = session.shipping_details || session.collected_information?.shipping_details;
   const address = shipping?.address || details.address || {};
-  const items = describeOrderItems(session.metadata?.items);
+  const items = await loadOrderItems(session);
   const message = [
     "New paid order — Booty Bands Fitness",
     "Stripe reference: " + session.id,
@@ -423,6 +435,8 @@ app.post("/webhook", express.raw({ type: "application/json" }), async (req, res)
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
     if (session.payment_status !== "paid") return res.json({ received: true });
+    if (notifiedSessions.has(session.id)) return res.json({ received: true, duplicate: true });
+    notifiedSessions.add(session.id);
 
     console.log("NEW ORDER RECEIVED:");
     console.log({
