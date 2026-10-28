@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const https = require("https");
+const { startOrderNotifications } = require("./order-notifications.cjs");
 
 const app = express();
 
@@ -333,8 +334,6 @@ async function sendOrderConfirmationEmail(session) {
   });
 }
 
-// Sandbox-only duplicate suppression. Production needs durable shared storage.
-const notifiedSessions = new Set();
 async function loadOrderItems(session) {
   try {
     const result = await stripe.checkout.sessions.listLineItems(session.id, { limit: 100 });
@@ -413,63 +412,32 @@ app.get("/health", (req, res) => {
 // IMPORTANT: this route must be registered with express.raw() BEFORE
 // app.use(express.json()) below, since Stripe's signature verification
 // needs the exact raw request bytes — not a parsed object.
+const orderNotifications = startOrderNotifications({
+  stripe,
+  sendCustomer: sendOrderConfirmationEmail,
+  sendOwner: sendOwnerAlert,
+});
+
 app.post("/webhook", express.raw({ type: "application/json" }), async (req, res) => {
-  if (!stripeWebhookSecret) {
-    console.error("STRIPE_WEBHOOK_SECRET is missing.");
-    return res.status(503).json({ error: "Webhook is not configured." });
-  }
-
+  if (!stripeWebhookSecret) return res.status(503).json({ error: "Webhook is not configured." });
   let event;
-
   try {
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      req.headers["stripe-signature"],
-      stripeWebhookSecret
-    );
+    event = stripe.webhooks.constructEvent(req.body, req.headers["stripe-signature"], stripeWebhookSecret);
   } catch (error) {
     console.warn("Rejected Stripe webhook:", error.message);
     return res.status(400).json({ error: "Invalid webhook signature." });
   }
-
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
-    if (session.payment_status !== "paid") return res.json({ received: true });
-    if (notifiedSessions.has(session.id)) return res.json({ received: true, duplicate: true });
-    notifiedSessions.add(session.id);
-
-    console.log("NEW ORDER RECEIVED:");
-    console.log({
-      stripeSessionId: session.id,
-      email: session.customer_details?.email,
-      name: session.customer_details?.name,
-      amount: session.amount_total ? session.amount_total / 100 : null,
-      address: session.customer_details?.address,
-      phone: session.customer_details?.phone,
-      items: session.metadata?.items,
-    });
-
+    if (session.payment_status !== "paid") return res.json({ received: true, paymentPending: true });
     try {
-      const brevoResponse = await sendOrderConfirmationEmail(session);
-      console.log("ORDER CONFIRMATION EMAIL SENT:", {
-        stripeSessionId: session.id,
-        email: session.customer_details?.email || session.customer_email,
-        brevoStatus: brevoResponse.statusCode,
-      });
+      await orderNotifications.enqueue(session);
+      orderNotifications.processQueue().catch(error => console.error("Queue trigger failed:", error));
     } catch (error) {
-      console.error("ORDER CONFIRMATION EMAIL FAILED:", {
-        stripeSessionId: session.id,
-        message: error.message,
-      });
-    }
-    try {
-      await sendOwnerAlert(session);
-      console.log("OWNER ORDER ALERT SENT:", session.id);
-    } catch (error) {
-      console.error("OWNER ORDER ALERT FAILED:", session.id, error.message);
+      console.error("Could not persist order notification jobs:", session.id, error.message);
+      return res.status(503).json({ error: "Unable to persist order notification; Stripe should retry." });
     }
   }
-
   return res.json({ received: true });
 });
 
