@@ -1,4 +1,5 @@
 ﻿import { useContext } from "react";
+import { Link } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 import { products } from "../data/products";
 
@@ -62,6 +63,7 @@ function Products() {
                       ))}
                     </ul>
                   )}
+                  <Link to={`/products/${item.id}`} className="inline-block mb-4 underline font-semibold text-black hover:text-gray-600" aria-label={`View details for ${item.name}`}>View Details</Link>
                   <hr className="my-5 border-gray-200" />
                   <button
                     type="button"
