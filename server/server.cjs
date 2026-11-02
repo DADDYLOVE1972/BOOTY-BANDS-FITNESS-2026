@@ -334,7 +334,7 @@ async function sendOrderConfirmationEmail(session) {
 }
 
 
-/* Notification status is persisted on the Stripe Checkout Session so it
+/* Notification status is persisted on the Stripe PaymentIntent so it
    survives Render restarts without depending on an ephemeral local disk.
    This is best-effort, NOT atomic exactly-once delivery: concurrent workers
    and a lost acknowledgement after Brevo accepts an email can duplicate it.
@@ -389,18 +389,24 @@ async function sendOwnerAlert(session) {
 
 async function deliverPaidOrderNotifications(sessionId) {
   // Re-read from Stripe instead of trusting stale event metadata.
-  let session = await stripe.checkout.sessions.retrieve(sessionId);
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
   if (session.payment_status !== "paid") return;
+  // Stripe Checkout Sessions cannot be updated after completion. Store
+  // best-effort delivery flags on the associated PaymentIntent instead.
+  const paymentIntentId = typeof session.payment_intent === "string"
+    ? session.payment_intent : session.payment_intent?.id;
+  if (!paymentIntentId) throw new Error("Paid Checkout Session has no PaymentIntent.");
+  let paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
   const channels = [
     { key: "bbf_customer_email_sent", send: sendOrderConfirmationEmail, label: "CUSTOMER CONFIRMATION" },
     { key: "bbf_owner_email_sent", send: sendOwnerAlert, label: "OWNER ALERT" },
   ];
   const failures = [];
   for (const channel of channels) {
-    if (session.metadata?.[channel.key] === "true") continue;
+    if (paymentIntent.metadata?.[channel.key] === "true") continue;
     try {
       await channel.send(session);
-      session = await stripe.checkout.sessions.update(sessionId, {
+      paymentIntent = await stripe.paymentIntents.update(paymentIntentId, {
         metadata: { [channel.key]: "true" },
       });
       console.log(channel.label + " SENT:", sessionId);
