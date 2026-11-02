@@ -1,4 +1,5 @@
 import { featuredProducts } from "../data/products";
+import { Link } from "react-router-dom";
 import { homepageConfig } from "../config/homepage";
 import { memo, useContext } from "react";
 import { CartContext } from "../context/CartContext";
@@ -43,17 +44,19 @@ function FeaturedProducts() {
                   <span className="absolute top-4 left-4 bg-black text-white text-xs px-3 py-1 rounded-full">
                     {item.tag}
                   </span>
-                  <img
-                    src={item.img}
-                    alt={item.name}
-                    className="max-h-40 object-contain transition-transform duration-300 group-hover:scale-105"
-                    loading="lazy"
-                  />
+                  <Link to={`/products/${item.id}`} aria-label={`View details for ${item.name}`} className="inline-flex items-center justify-center focus-visible:outline-2 focus-visible:outline-black">
+                    <img
+                      src={item.img}
+                      alt={item.name}
+                      className="max-h-40 object-contain transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </Link>
                 </div>
 
                 <div className="flex flex-col flex-1 p-6 text-center">
                   <h3 className="text-xl font-bold mb-2">
-                    {item.name}
+                    <Link to={`/products/${item.id}`} className="hover:underline focus-visible:underline">{item.name}</Link>
                   </h3>
                   <p className="text-gray-500 text-sm mb-2">
                     {item.description}
@@ -86,6 +89,8 @@ function FeaturedProducts() {
                       ${item.price}
                     </p>
 
+                    <Link to={`/products/${item.id}`} className="inline-block mb-4 underline font-semibold text-black hover:text-gray-600" aria-label={`View details for ${item.name}`}>View Details</Link>
+                    <hr className="mb-5 border-gray-200" />
                     <button
                       type="button"
                       onClick={() => addToCart(item)}
