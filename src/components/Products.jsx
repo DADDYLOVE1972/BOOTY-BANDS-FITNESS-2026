@@ -1,4 +1,5 @@
 ﻿import { useContext } from "react";
+import { Link } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 import { products } from "../data/products";
 
@@ -27,18 +28,20 @@ function Products() {
                     {item.tag}
                   </span>
 
-                  <img
-                    src={item.img}
-                    alt={item.name}
-                    className="max-h-40 object-contain transition-transform duration-300 group-hover:scale-105"
-                    loading="lazy"
-                  />
+                  <Link to={`/products/${item.id}`} aria-label={`View details for ${item.name}`} className="inline-flex items-center justify-center focus-visible:outline-2 focus-visible:outline-black">
+                    <img
+                      src={item.img}
+                      alt={item.name}
+                      className="max-h-40 object-contain transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </Link>
                 </div>
 
                 <div className="p-6 text-center">
 
                   <h3 className="text-2xl font-black text-gray-900 mb-2">
-                    {item.name}
+                    <Link to={`/products/${item.id}`} className="hover:underline focus-visible:underline">{item.name}</Link>
                   </h3>
                   <p className="text-gray-500 mb-2">{item.description}</p>
 
@@ -62,6 +65,7 @@ function Products() {
                       ))}
                     </ul>
                   )}
+                  <Link to={`/products/${item.id}`} className="inline-block mb-4 underline font-semibold text-black hover:text-gray-600" aria-label={`View details for ${item.name}`}>View Details</Link>
                   <hr className="my-5 border-gray-200" />
                   <button
                     type="button"
