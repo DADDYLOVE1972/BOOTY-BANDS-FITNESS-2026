@@ -333,6 +333,85 @@ async function sendOrderConfirmationEmail(session) {
   });
 }
 
+
+/* Notification status is persisted on the Stripe Checkout Session so it
+   survives Render restarts without depending on an ephemeral local disk.
+   This is best-effort, NOT atomic exactly-once delivery: concurrent workers
+   and a lost acknowledgement after Brevo accepts an email can duplicate it.
+   A transactional outbox/database is required for stronger guarantees. */
+const processingSessions = new Set();
+
+async function loadOrderItems(session) {
+  try {
+    const result = await stripe.checkout.sessions.listLineItems(session.id, { limit: 100 });
+    if (result.data.length) {
+      return result.data.map((item) => ({
+        name: item.description || "Product",
+        quantity: item.quantity || 1,
+      }));
+    }
+  } catch (error) {
+    console.error("Stripe line item lookup failed:", session.id, error.message);
+  }
+  return describeOrderItems(session.metadata?.items);
+}
+
+async function sendOwnerAlert(session) {
+  if (!brevoApiKey || !brevoSenderEmail) {
+    throw new Error("Brevo email configuration is incomplete.");
+  }
+  const email = process.env.ORDER_ALERT_EMAIL || "support@bootybandsfitness.com";
+  const details = session.customer_details || {};
+  const shipping = session.shipping_details || session.collected_information?.shipping_details;
+  const address = shipping?.address || details.address || {};
+  const items = await loadOrderItems(session);
+  const message = [
+    "New paid order — Booty Bands Fitness",
+    "Stripe reference: " + session.id,
+    "Total: " + formatUsd(session.amount_total),
+    "Customer: " + (details.name || "Not provided"),
+    "Email: " + (details.email || session.customer_email || "Not provided"),
+    "Phone: " + (details.phone || "Not provided"),
+    "Ship to: " + (shipping?.name || details.name || "Not provided"),
+    "Address: " + [address.line1, address.line2, address.city, address.state, address.postal_code, address.country].filter(Boolean).join(", "),
+    "Items:",
+    ...items.map((item) => item.name + " (Qty " + item.quantity + ")"),
+    "Verify the order in Stripe before shipping.",
+  ].join("\\n");
+  return postJsonToBrevo({
+    sender: { name: brevoSenderName, email: brevoSenderEmail },
+    to: [{ email }],
+    subject: "NEW PAID ORDER — BOOTY BANDS FITNESS",
+    textContent: message,
+    htmlContent: "<pre style='font-family:Arial,sans-serif;white-space:pre-wrap'>" + escapeHtml(message) + "</pre>",
+  });
+}
+
+async function deliverPaidOrderNotifications(sessionId) {
+  // Re-read from Stripe instead of trusting stale event metadata.
+  let session = await stripe.checkout.sessions.retrieve(sessionId);
+  if (session.payment_status !== "paid") return;
+  const channels = [
+    { key: "bbf_customer_email_sent", send: sendOrderConfirmationEmail, label: "CUSTOMER CONFIRMATION" },
+    { key: "bbf_owner_email_sent", send: sendOwnerAlert, label: "OWNER ALERT" },
+  ];
+  const failures = [];
+  for (const channel of channels) {
+    if (session.metadata?.[channel.key] === "true") continue;
+    try {
+      await channel.send(session);
+      session = await stripe.checkout.sessions.update(sessionId, {
+        metadata: { [channel.key]: "true" },
+      });
+      console.log(channel.label + " SENT:", sessionId);
+    } catch (error) {
+      console.error(channel.label + " FAILED:", sessionId, error.message);
+      failures.push(channel.label);
+    }
+  }
+  if (failures.length) throw new Error("Notification delivery failed: " + failures.join(", "));
+}
+
 function normalizeCart(cart) {
   if (!Array.isArray(cart) || cart.length === 0) {
     throw new Error("Cart is empty.");
@@ -391,32 +470,21 @@ app.post("/webhook", express.raw({ type: "application/json" }), async (req, res)
     return res.status(400).json({ error: "Invalid webhook signature." });
   }
 
-  if (event.type === "checkout.session.completed") {
+  if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
     const session = event.data.object;
-
-    console.log("NEW ORDER RECEIVED:");
-    console.log({
-      stripeSessionId: session.id,
-      email: session.customer_details?.email,
-      name: session.customer_details?.name,
-      amount: session.amount_total ? session.amount_total / 100 : null,
-      address: session.customer_details?.address,
-      phone: session.customer_details?.phone,
-      items: session.metadata?.items,
-    });
-
+    if (session.payment_status !== "paid") return res.json({ received: true });
+    if (processingSessions.has(session.id)) {
+      // Request Stripe to retry instead of acknowledging concurrent work.
+      return res.status(503).json({ error: "Notification processing in progress." });
+    }
+    processingSessions.add(session.id);
     try {
-      const brevoResponse = await sendOrderConfirmationEmail(session);
-      console.log("ORDER CONFIRMATION EMAIL SENT:", {
-        stripeSessionId: session.id,
-        email: session.customer_details?.email || session.customer_email,
-        brevoStatus: brevoResponse.statusCode,
-      });
+      await deliverPaidOrderNotifications(session.id);
     } catch (error) {
-      console.error("ORDER CONFIRMATION EMAIL FAILED:", {
-        stripeSessionId: session.id,
-        message: error.message,
-      });
+      console.error("PAID ORDER NOTIFICATION RETRY NEEDED:", session.id, error.message);
+      return res.status(500).json({ error: "Notification delivery pending retry." });
+    } finally {
+      processingSessions.delete(session.id);
     }
   }
 
