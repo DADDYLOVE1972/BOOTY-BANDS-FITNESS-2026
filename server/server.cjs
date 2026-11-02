@@ -377,7 +377,7 @@ async function sendOwnerAlert(session) {
     "Items:",
     ...items.map((item) => item.name + " (Qty " + item.quantity + ")"),
     "Verify the order in Stripe before shipping.",
-  ].join("\\n");
+  ].join("\n");
   return postJsonToBrevo({
     sender: { name: brevoSenderName, email: brevoSenderEmail },
     to: [{ email }],
